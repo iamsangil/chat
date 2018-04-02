@@ -21,13 +21,14 @@ type clientTable struct {
 type Client interface {
 	GetID() string
 	GetConn() *websocket.Conn
-	GetRoom() *room
+	GetRoom() Room
+	SetRoom(room Room)
 }
 
 type baseClient struct {
 	id   string
 	conn *websocket.Conn
-	room *room
+	room Room
 }
 
 func GetClientTable() *clientTable {
@@ -52,7 +53,10 @@ func (ct clientTable) Find(id string) (Client, error) {
 }
 
 func NewClient(id string, conn *websocket.Conn) Client {
-	return &baseClient{}
+	return &baseClient{
+		id:   id,
+		conn: conn,
+	}
 }
 
 func (c baseClient) GetID() string {
@@ -63,6 +67,10 @@ func (c baseClient) GetConn() *websocket.Conn {
 	return c.conn
 }
 
-func (c baseClient) GetRoom() *room {
+func (c baseClient) GetRoom() Room {
 	return c.room
+}
+
+func (c *baseClient) SetRoom(room Room) {
+	c.room = room
 }
